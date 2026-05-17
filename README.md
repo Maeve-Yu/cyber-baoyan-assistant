@@ -6,11 +6,23 @@
 
 ## 预览
 
-![首页看板](assets/preview-home.svg)
+![首页看板](assets/home.png)
 
-![项目总表](assets/preview-table.svg)
+![项目总表](assets/table2.png)
 
-![数据与提醒](assets/preview-data-center.svg)
+![项目总表详情](assets/table3.png)
+
+![项目详情](assets/项目详情.png)
+
+![项目详情字段维护](assets/项目详情2.png)
+
+![材料整理](assets/材料整理.png)
+
+![日历提醒](assets/日历提醒.png)
+
+![通知解析](assets/通知解析.png)
+
+![文件夹整理](assets/文件夹整理.png)
 
 ## 功能
 

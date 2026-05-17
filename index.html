@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="一个面向保研申请季的本地网页助手，用来管理申请项目、材料清单、复试任务、日程提醒和备份数据。" />
+  <title>你的保研赛博北天搭子</title>
+  <link rel="stylesheet" href="styles.css?v=20" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="rail">
+      <div class="brand-mini">研</div>
+      <button class="rail-item active" data-page="home" title="首页"><span>🏠</span><small>首页</small></button>
+      <button class="rail-item" data-page="table" title="总表"><span>📊</span><small>总表</small></button>
+      <button class="rail-item" data-page="interview" title="复试"><span>🎤</span><small>复试</small></button>
+      <button class="rail-item" data-page="materials" title="材料"><span>📁</span><small>材料</small></button>
+      <button class="rail-item" data-page="folder" title="文件夹"><span>🗂️</span><small>文件夹</small></button>
+      <button class="rail-item" data-page="schedule" title="日程"><span>📅</span><small>日程</small></button>
+      <button class="rail-item" data-page="parse" title="解析"><span>✨</span><small>解析</small></button>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <h1>你的保研赛博北天搭子（保研信息整理助手）</h1>
+          <p>用一个清晰表格管理申请、入营、复试、结果和材料准备</p>
+        </div>
+        <div class="top-actions">
+          <span id="saveStatus" class="save-pill">● 已自动保存</span>
+          <button class="icon-btn" id="dataCenterBtn">数据与提醒</button>
+          <button class="icon-btn" id="importExcelBtn">导入本地 Excel</button>
+          <input id="importExcelInput" type="file" accept=".xlsx,.xls,.csv,.txt,.html" hidden />
+          <button class="icon-btn" id="exportBackupBtn">导出备份</button>
+          <button class="icon-btn" id="importBackupBtn">导入备份</button>
+          <input id="importBackupInput" type="file" accept=".json" hidden />
+          <button class="icon-btn" id="exportBtn">导出 Excel</button>
+          <button class="primary-btn" id="quickParseBtn">✨ 通知解析</button>
+        </div>
+      </header>
+
+      <section id="page-home" class="page active">
+        <div class="summary-grid" id="homeSummary"></div>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>优先处理项目</h2>
+            <span>按所有关键节点的时间紧迫性排序</span>
+          </div>
+          <div id="priorityCards" class="priority-grid"></div>
+        </section>
+        <section class="panel two-col">
+          <div>
+            <div class="panel-head compact"><h2>我的下一步</h2></div>
+            <div id="nextActions" class="action-list"></div>
+          </div>
+          <div>
+            <div class="panel-head compact"><h2>阶段分布</h2></div>
+            <div id="stageOverview" class="stage-list"></div>
+          </div>
+        </section>
+      </section>
+
+      <section id="page-table" class="page">
+        <section class="panel">
+          <div class="panel-head table-title">
+            <div>
+              <h2>项目总表</h2>
+              <span>点击表头可排序；点击“详情/编辑”维护时间线与清单</span>
+            </div>
+            <div class="small-actions">
+              <button class="icon-btn" id="addProjectBtn">+ 新增项目</button>
+              <button class="icon-btn" id="resetDemoBtn">恢复示例</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <input id="searchInput" type="search" placeholder="搜索学校 / 学院 / 方向..." />
+            <select id="stageFilter"></select>
+            <select id="typeFilter"></select>
+            <select id="screenFilter"></select>
+            <select id="priorityFilter"></select>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table" id="projectTable"></table>
+          </div>
+        </section>
+      </section>
+
+      <section id="page-interview" class="page">
+        <div class="mini-stats" id="interviewStats"></div>
+        <section class="panel">
+          <div class="panel-head"><h2>复试准备</h2><span>只汇总已入营/进入复试/等待最终结果的项目</span></div>
+          <div class="table-wrap"><table class="data-table" id="interviewTable"></table></div>
+        </section>
+      </section>
+
+      <section id="page-materials" class="page">
+        <section class="panel">
+          <div class="panel-head"><h2>材料与任务清单</h2><span>申请材料和复试准备分开管理</span></div>
+          <div class="segmented">
+            <button class="seg active" data-material-view="application">申请材料</button>
+            <button class="seg" data-material-view="interview">复试准备</button>
+          </div>
+          <div class="table-wrap"><table class="data-table" id="materialsTable"></table></div>
+        </section>
+      </section>
+
+
+      <section id="page-folder" class="page">
+        <section class="panel">
+          <div class="panel-head folder-head">
+            <div>
+              <h2>材料整理文件夹</h2>
+              <span>为每个保研项目设置电脑中的材料文件夹路径，一键跳转打开文件夹</span>
+            </div>
+            <div class="folder-note">不会读取文件夹内部文件，仅保存路径用于跳转</div>
+          </div>
+          <div class="folder-toolbar">
+            <input id="folderSearchInput" type="search" placeholder="搜索学校 / 学院 / 文件夹路径..." />
+            <button class="icon-btn" id="refreshFoldersBtn">使用说明</button>
+          </div>
+          <div id="folderPanel" class="folder-panel"></div>
+        </section>
+      </section>
+
+      <section id="page-schedule" class="page">
+        <section class="panel">
+          <div class="panel-head"><h2>日程节点</h2><span>汇总申请截止、名单公布、复试材料、复试开始、最终结果和 Offer 确认</span></div>
+          <div class="calendar-toolbar">
+            <button class="icon-btn" id="prevMonthBtn">‹ 上月</button>
+            <strong id="calendarTitle">本月日程</strong>
+            <button class="icon-btn" id="nextMonthBtn">下月 ›</button>
+          </div>
+          <div id="scheduleCalendar" class="schedule-calendar"></div>
+          <div class="panel-head compact schedule-list-head"><h2>时间线列表</h2><span>按时间顺序展示所有关键节点</span></div>
+          <div id="scheduleList" class="timeline-list"></div>
+        </section>
+      </section>
+
+      <section id="page-parse" class="page">
+        <section class="panel parse-panel">
+          <div class="panel-head"><h2>半自动通知解析</h2><span>不接 AI：用关键词识别日期、链接、材料，再由你确认</span></div>
+          <textarea id="noticeText" placeholder="粘贴学校官网通知正文或关键信息，例如：2026年××大学××学院夏令营通知，报名截止时间为6月15日17:00，活动时间为7月8日至7月10日，申请材料包括个人简历、成绩单、排名证明、英语水平证明、推荐信... 报名网址：https://..."></textarea>
+          <div class="parse-actions">
+            <button class="primary-btn" id="parseBtn">开始解析</button>
+            <button class="icon-btn" id="clearParseBtn">清空</button>
+          </div>
+          <div id="parseResult" class="parse-result hidden"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="detailModal" class="modal hidden">
+    <div class="modal-card detail-card">
+      <button class="close-btn" data-close="detailModal">×</button>
+      <div class="modal-head">
+        <h2 id="detailTitle">项目详情</h2>
+        <p id="detailSub"></p>
+      </div>
+      <div class="smart-status-panel">
+        <div class="stage-control">
+          <label>当前阶段
+            <select id="fStage"></select>
+          </label>
+        </div>
+        <div class="next-focus">
+          <span>下一节点</span>
+          <strong id="smartNextNode">待填写</strong>
+        </div>
+      </div>
+      <div id="stageStepper" class="stage-stepper"></div>
+      <div id="stageHint" class="stage-hint"></div>
+
+      <div class="sub-panel current-panel">
+        <div class="panel-head compact"><h3>当前需要处理</h3><span>根据当前阶段自动显示</span></div>
+        <div id="currentTasksPanel" class="current-tasks"></div>
+      </div>
+
+      <details class="full-info quick-parse-box" id="detailParseBlock">
+        <summary>从通知解析并填入当前项目</summary>
+        <p class="muted parse-tip">可粘贴官网通知/公众号正文，系统会半自动识别学校、学院、方向、时间、链接和材料。解析结果不受当前阶段锁定规则影响，但保存后会自动校验阶段逻辑。</p>
+        <textarea id="detailNoticeText" placeholder="在这里粘贴通知正文或链接..."></textarea>
+        <div class="parse-actions">
+          <button class="primary-btn" id="detailParseBtn">开始解析</button>
+          <button class="icon-btn" id="clearDetailParseBtn">清空</button>
+        </div>
+        <div id="detailParseResult" class="parse-result hidden"></div>
+      </details>
+
+      <details class="full-info" id="fullInfoBlock">
+        <summary>展开完整信息 / 历史字段</summary>
+        <div class="detail-grid">
+          <label>学校<input id="fSchool" /></label>
+          <label>学院<input id="fCollege" /></label>
+          <label>方向<input id="fDirection" /></label>
+          <label>类型<select id="fType"></select></label>
+          <label>优先级<select id="fPriority"></select></label>
+          <label>初筛结果<select id="fScreening"></select></label>
+          <label>最终结果<select id="fFinal"></select></label>
+        </div>
+
+        <div class="sub-panel">
+          <h3>关键时间线</h3>
+          <div class="timeline-edit">
+            <label>申请截止<input type="datetime-local" id="fDeadline" /></label>
+            <label>名单公布<input type="date" id="fResultPub" /></label>
+            <label>复试材料截止<input type="datetime-local" id="fInterviewMatDeadline" /></label>
+            <label>复试地点<input id="fInterviewLocation" placeholder="线上/线下地点/会议链接" /></label>
+            <label>复试开始<input type="datetime-local" id="fInterviewStart" /></label>
+            <label>复试结束<input type="datetime-local" id="fInterviewEnd" /></label>
+            <label>最终结果公布<input type="date" id="fFinalPub" /></label>
+            <label>Offer确认截止<input type="datetime-local" id="fOfferDeadline" /></label>
+          </div>
+        </div>
+
+        <div class="sub-panel">
+          <div class="tabbar">
+            <button class="tab active" data-tab="appMats">申请材料</button>
+            <button class="tab" data-tab="intTasks">复试准备</button>
+            <button class="tab" data-tab="folderTab">材料整理文件夹</button>
+          </div>
+          <div id="appMats" class="tab-content active"></div>
+          <div id="intTasks" class="tab-content"></div>
+          <div id="folderTab" class="tab-content"></div>
+        </div>
+
+        <div class="detail-grid links-grid">
+          <label>信息网址<input id="fInfoUrl" placeholder="通知原文链接" /></label>
+          <label>报名地址<input id="fApplyUrl" placeholder="报名系统链接" /></label>
+        </div>
+        <label class="full-label">备注<textarea id="fNote"></textarea></label>
+      </details>
+
+      <div class="modal-actions">
+        <button class="danger-btn" id="deleteProjectBtn">删除项目</button>
+        <button class="icon-btn" id="openInfoBtn">信息网址</button>
+        <button class="icon-btn" id="openApplyBtn">报名地址</button>
+        <button class="primary-btn" id="saveDetailBtn">保存修改</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div id="importPreviewModal" class="modal hidden">
+    <div class="modal-card preview-card">
+      <button class="close-btn" data-close="importPreviewModal">×</button>
+      <div class="modal-head">
+        <h2>导入预览</h2>
+        <p>请确认即将导入的本地表格数据，避免误覆盖或重复导入。</p>
+      </div>
+      <div id="importSummary" class="import-summary"></div>
+      <div class="import-mode-box">
+        <label>遇到相同项目时：
+          <select id="importModeSelect">
+            <option value="update">更新已有项目</option>
+            <option value="skip">跳过重复项目</option>
+            <option value="new">作为新项目导入</option>
+          </select>
+        </label>
+      </div>
+      <div class="table-wrap import-preview-wrap"><table class="data-table" id="importPreviewTable"></table></div>
+      <div class="modal-actions">
+        <button class="icon-btn" data-close="importPreviewModal">取消</button>
+        <button class="primary-btn" id="confirmImportBtn">确认导入</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="dataCenterModal" class="modal hidden">
+    <div class="modal-card data-center-card">
+      <button class="close-btn" data-close="dataCenterModal">×</button>
+      <div class="modal-head">
+        <h2>数据与提醒</h2>
+        <p>管理本地存储、备份和浏览器提醒。所有数据默认只保存在当前浏览器中。</p>
+      </div>
+      <div id="dataHealthPanel" class="data-health-panel"></div>
+      <div class="settings-grid">
+        <label class="setting-row">
+          <span>
+            <b>备份提醒</b>
+            <small>超过指定天数未导出备份时，在页面中提醒你。</small>
+          </span>
+          <select id="backupIntervalSelect">
+            <option value="3">每 3 天</option>
+            <option value="7">每 7 天</option>
+            <option value="14">每 14 天</option>
+            <option value="30">每 30 天</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span>
+            <b>浏览器通知</b>
+            <small>网页打开时，对当天关键节点发送系统通知。</small>
+          </span>
+          <button class="icon-btn" id="enableNotifyBtn" type="button">开启通知</button>
+        </label>
+      </div>
+      <div class="data-actions">
+        <button class="primary-btn" id="dataExportBackupBtn">立即导出备份</button>
+        <button class="icon-btn" id="copyBackupBtn">复制备份文本</button>
+        <button class="icon-btn" id="dataImportBackupBtn">导入备份</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="reminderModal" class="modal hidden">
+    <div class="modal-card reminder-card">
+      <button class="close-btn" data-close="reminderModal">×</button>
+      <div class="modal-head">
+        <h2>今日关键节点</h2>
+        <p>这些事项今天需要重点关注。</p>
+      </div>
+      <div id="todayReminderList" class="today-reminder-list"></div>
+      <div class="modal-actions">
+        <button class="primary-btn" data-close="reminderModal">我知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden">已保存</div>
+  <script src="script.js?v=20"></script>
+</body>
+</html>

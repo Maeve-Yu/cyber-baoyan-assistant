@@ -32,7 +32,7 @@
 .more-events{display:block;margin-top:2px;color:var(--muted);font-size:11px;font-weight:800}.schedule-list-head{margin-top:8px}
 .date-stack{display:inline-flex;flex-direction:column;gap:2px;vertical-align:middle}.date-stack small{font-size:11px;color:var(--muted);font-weight:800}.soon .date-stack small{color:var(--orange)}
 .step.stopped{background:#f1f5f9!important;border-color:#cbd5e1!important;color:#64748b!important;box-shadow:0 0 0 2px rgba(100,116,139,.08) inset}.step.stopped i{background:#64748b!important}.step.blocked{opacity:.45;background:#f8fafc!important;color:#94a3b8!important}.step.blocked i{background:#cbd5e1!important}
-.quick-parse-box textarea{width:100%;min-height:120px;border:1px solid var(--line2);border-radius:12px;padding:12px;resize:vertical;font:inherit;margin:0 14px 10px;background:#fff}.quick-parse-box .parse-tip{margin:0 14px 10px}.quick-parse-box .parse-actions{margin:0 14px 14px}.success-mini,.success-btn{border:0;background:#ecfdf5;color:#047857;border-radius:9px;padding:8px 10px;font-weight:900;cursor:pointer}
+.success-mini,.success-btn{border:0;background:#ecfdf5;color:#047857;border-radius:9px;padding:8px 10px;font-weight:900;cursor:pointer}
 @media(max-width:900px){.calendar-cell{min-height:82px}.calendar-event{font-size:10px}.calendar-toolbar{justify-content:flex-start}.schedule-calendar{overflow:auto}.calendar-week,.calendar-grid{min-width:760px}}
 
 
@@ -64,7 +64,6 @@
 .parse-review-section h4{margin:0 0 10px;font-size:14px;color:#1e3a8a}
 .parse-textarea{width:100%;min-height:112px;border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font:inherit;resize:vertical;background:#fff}
 .parse-textarea.small{min-height:70px}
-#detailParseResult{margin-top:12px}
 
 /* V19 稳定性增强：解析核对、导入预览、备份与今日提醒 */
 .parse-label-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}

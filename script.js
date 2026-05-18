@@ -423,7 +423,7 @@ function openDetail(id){
   document.getElementById('detailSub').textContent=`${p.direction} · ${p.type}`;
   fSchool.value=p.school||''; fCollege.value=p.college||''; fDirection.value=p.direction||''; fType.value=p.type||types[0]; fStage.value=p.stage||stages[0]; fPriority.value=p.priority||'中'; fScreening.value=p.application.screeningResult||'未知'; fFinal.value=p.interview.finalResult||'未知';
   fDeadline.value=dtInput(p.application.deadline); fResultPub.value=dateInput(p.application.resultPublishTime); fInterviewMatDeadline.value=dtInput(p.interview.materialDeadline); fInterviewLocation.value=p.interview.location||''; fInterviewStart.value=dtInput(p.interview.startTime); fInterviewEnd.value=dtInput(p.interview.endTime); fFinalPub.value=dateInput(p.interview.finalResultPublishTime); fOfferDeadline.value=dtInput(p.interview.offerConfirmDeadline);
-  fInfoUrl.value=p.infoUrl||''; fApplyUrl.value=p.applyUrl||''; fNote.value=p.note||''; if(document.getElementById('detailNoticeText')) detailNoticeText.value='';
+  fInfoUrl.value=p.infoUrl||''; fApplyUrl.value=p.applyUrl||''; fNote.value=p.note||'';
   renderListEditor('appMats', p.application.materials, 'application', stageIndex(p.stage)<1);
   renderListEditor('intTasks', p.interview.tasks, 'interview', !p.interview.enabled || stageIndex(p.stage)<3);
   renderFolderTab(p);
@@ -638,9 +638,6 @@ function applyParsedToProject(p, parsed){
   if(parsed.deadline) p.application.deadline=parsed.deadline; if(parsed.resultPublishTime) p.application.resultPublishTime=parsed.resultPublishTime; if(parsed.interviewMaterialDeadline) p.interview.materialDeadline=parsed.interviewMaterialDeadline; if(parsed.interviewLocation) p.interview.location=parsed.interviewLocation; if(parsed.interviewStart) p.interview.startTime=parsed.interviewStart; if(parsed.interviewEnd) p.interview.endTime=parsed.interviewEnd; if(parsed.finalResultPublishTime) p.interview.finalResultPublishTime=parsed.finalResultPublishTime; if(parsed.offerConfirmDeadline) p.interview.offerConfirmDeadline=parsed.offerConfirmDeadline; if(parsed.note) p.note=p.note?`${p.note}；${parsed.note}`:parsed.note;
   if(parsed.materials&&parsed.materials.length){ const existed=new Set((p.application.materials||[]).map(x=>x.name)); parsed.materials.forEach(m=>{ if(!existed.has(m)) p.application.materials.push(makeItem(m)); }); }
 }
-function parseIntoCurrentProject(){ const p=projects.find(x=>x.id===currentEditId); if(!p) return; const text=document.getElementById('detailNoticeText').value||''; if(!text.trim()){ showToast('请先粘贴通知内容'); return; } renderNoticeReview(document.getElementById('detailParseResult'), extractNoticeFields(text), 'detail', p.id); }
-
-
 // ===== 本地 Excel 导入：支持 .xlsx、系统导出的 .xls/HTML 表格、CSV/TXT =====
 function excelSerialToDateText(num){
   const n = Number(num);
@@ -1028,8 +1025,6 @@ function bind(){
   if(document.getElementById('enableNotifyBtn')) enableNotifyBtn.onclick=enableBrowserNotifications;
   if(document.getElementById('backupIntervalSelect')) backupIntervalSelect.onchange=e=>saveSettings({backupIntervalDays:Number(e.target.value)||7});
   quickParseBtn.onclick=()=>switchPage('parse'); if(document.getElementById('importExcelBtn')) importExcelBtn.onclick=()=>importExcelInput.click(); if(document.getElementById('importExcelInput')) importExcelInput.onchange=e=>handleLocalExcelImport(e.target.files[0]); if(document.getElementById('exportBackupBtn')) exportBackupBtn.onclick=exportBackup; if(document.getElementById('importBackupBtn')) importBackupBtn.onclick=()=>importBackupInput.click(); if(document.getElementById('importBackupInput')) importBackupInput.onchange=e=>importBackup(e.target.files[0]); if(document.getElementById('confirmImportBtn')) confirmImportBtn.onclick=confirmImportPreview; addProjectBtn.onclick=addProject; resetDemoBtn.onclick=()=>{ if(confirm('恢复示例数据会覆盖当前数据，确定吗？')){projects=demoProjects();save();renderAll();} }; exportBtn.onclick=exportExcel; parseBtn.onclick=parseNotice; clearParseBtn.onclick=()=>{noticeText.value='';parseResult.classList.add('hidden');};
-  if(document.getElementById('detailParseBtn')) detailParseBtn.onclick=parseIntoCurrentProject;
-  if(document.getElementById('clearDetailParseBtn')) clearDetailParseBtn.onclick=()=>{ detailNoticeText.value=''; };
   if(document.getElementById('prevMonthBtn')) prevMonthBtn.onclick=()=>{ calendarMonth.setMonth(calendarMonth.getMonth()-1); renderSchedule(); };
   if(document.getElementById('nextMonthBtn')) nextMonthBtn.onclick=()=>{ calendarMonth.setMonth(calendarMonth.getMonth()+1); renderSchedule(); };
   if(document.getElementById('folderSearchInput')) folderSearchInput.oninput=e=>{ folderSearch=e.target.value; renderFolderPage(); };
